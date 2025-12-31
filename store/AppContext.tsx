@@ -14,6 +14,7 @@ interface AppContextType {
   addMovie: (movie: Movie) => void;
   deleteMovie: (id: string) => void;
   addBooking: (booking: Booking) => void;
+  cancelBooking: (bookingId: string) => void;
   updateShowTimeSeats: (showTimeId: string, bookedSeats: string[]) => void;
 }
 
@@ -65,6 +66,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   const addBooking = (booking: Booking) => setBookings([...bookings, booking]);
 
+  const cancelBooking = (bookingId: string) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'Cancelled' } : b));
+    
+    // Release seats for the showtime
+    setShowTimes(prev => prev.map(st => 
+      st.id === booking.showTimeId 
+        ? { ...st, availableSeats: st.availableSeats.filter(s => !booking.seats.includes(s)) }
+        : st
+    ));
+  };
+
   const updateShowTimeSeats = (showTimeId: string, bookedSeats: string[]) => {
     setShowTimes(prev => prev.map(st => 
       st.id === showTimeId 
@@ -76,7 +91,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider value={{
       currentUser, movies, theaters, showTimes, bookings,
-      login, logout, addMovie, deleteMovie, addBooking, updateShowTimeSeats
+      login, logout, addMovie, deleteMovie, addBooking, cancelBooking, updateShowTimeSeats
     }}>
       {children}
     </AppContext.Provider>
