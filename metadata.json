@@ -1,0 +1,7 @@
+{
+  "name": "Copy of CineBooking - Modern Movie Ticket Platform",
+  "description": "A comprehensive movie booking system featuring real-time seat selection, admin movie management, and AI-powered film insights.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
